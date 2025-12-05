@@ -133,8 +133,7 @@ def Sim(verbose = True):
         long-range inputs over time to each node.
 
     """
-    global ic,dt,teq,tmax,ttotal,downsamp,M,seed
-    print(M[:2,:2])
+    global ic,dt,teq,tmax,ttotal,downsamp,seed
          
     if M.shape[0]!=M.shape[1] or M.shape[0]!=nnodes:
         raise ValueError("check M dimensions (",M.shape,") and number of nodes (",nnodes,")")
