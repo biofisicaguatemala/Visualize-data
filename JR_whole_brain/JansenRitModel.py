@@ -134,6 +134,7 @@ def Sim(verbose = True):
 
     """
     global ic,dt,teq,tmax,ttotal,downsamp,M,seed
+    print(M[:2,:2])
          
     if M.shape[0]!=M.shape[1] or M.shape[0]!=nnodes:
         raise ValueError("check M dimensions (",M.shape,") and number of nodes (",nnodes,")")
@@ -205,6 +206,7 @@ def ParamsSim():
         pardict[var]=eval(var)
         
     return pardict
+
 
 
 
