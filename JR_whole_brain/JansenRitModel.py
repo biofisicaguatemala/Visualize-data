@@ -27,7 +27,8 @@ downsamp = 10 #Downsampling to reduce the number of points
 seed = 0 #Random seed
 
 #Network parameters
-M = np.loadtxt('structural_Deco_AAL.txt') #Structural connectivity
+# M = np.loadtxt('structural_Deco_AAL.txt') #Structural connectivity
+M = np.random.uniform(size=(90,90))
 nnodes = len(M) #number of nodes
 
 #Normalization factor
@@ -204,5 +205,6 @@ def ParamsSim():
         pardict[var]=eval(var)
         
     return pardict
+
 
 
