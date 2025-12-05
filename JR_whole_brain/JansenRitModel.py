@@ -31,8 +31,6 @@ seed = 0 #Random seed
 M = np.random.uniform(size=(90,90))
 nnodes = len(M) #number of nodes
 
-#Normalization factor
-norm = np.mean(np.sum(M,0)) #Average strength overall nodes
 
 #Node parameters
 a = 100 #Characteristic time constant for EPSPs (1/sec)
@@ -72,7 +70,7 @@ def s_not_numba(v,r0):
 
 @njit
 #Jansen & Rit multicolumn model (intra-columnar outputs)
-def f1(y,t):
+def f1(y,t,alpha,M):
     x0, x1, x2, x3, y0, y1, y2, y3 = y
 
     x0_dot = y0
@@ -85,7 +83,7 @@ def f1(y,t):
     y2_dot = B * b * (s(C3 * x0, r2)) - \
              2 * b * y2 - b**2 * x2
     x3_dot = y3
-    y3_dot = A * ad * (M / norm @ s(C2 * x1 - C4 * x2 + C * alpha * x3, r0)) - \
+    y3_dot = A * ad * (M  @ s(C2 * x1 - C4 * x2 + C * alpha * x3, r0)) - \
              2 * ad * y3 - ad**2 * x3
 
     return(np.vstack((x0_dot, x1_dot, x2_dot, x3_dot, y0_dot, y1_dot, y2_dot, y3_dot)))
@@ -105,7 +103,7 @@ def set_seed(seed):
     return(seed)
 
 
-def Sim(verbose = True):
+def Sim(alpha,M,verbose = True):
     """
     Run a network simulation with the current parameter values.
     
@@ -133,7 +131,7 @@ def Sim(verbose = True):
         long-range inputs over time to each node.
 
     """
-    global ic,dt,teq,tmax,ttotal,downsamp,M,seed
+    global ic,dt,teq,tmax,ttotal,downsamp,seed
          
     if M.shape[0]!=M.shape[1] or M.shape[0]!=nnodes:
         raise ValueError("check M dimensions (",M.shape,") and number of nodes (",nnodes,")")
@@ -165,7 +163,7 @@ def Sim(verbose = True):
     
     if verbose == True:
         for i in range(1,Nsim):
-            y_temp += dt * f1(y_temp, i)  #Deterministic part
+            y_temp += dt * f1(y_temp, i,alpha,M)  #Deterministic part
             y_temp[5,:] += f2(i) * np.sqrt(dt) * np.random.normal(0,1,nnodes) #Stochastic part
             #This line is for store values each dws points
             if (i % downsamp) == 0:
@@ -174,7 +172,7 @@ def Sim(verbose = True):
                 print('Elapsed time: %i seconds'%(i * dt)) #this is for impatient people
     else:
         for i in range(1,Nsim):
-            y_temp += dt * f1(y_temp, i)  #Deterministic part
+            y_temp += dt * f1(y_temp, i,alpha,M)  #Deterministic part
             y_temp[5,:] += f2(i) * np.sqrt(dt) * np.random.normal(0,1,nnodes) #Stochastic part
             #This line is for store values each dws points
             if (i % downsamp) == 0:
