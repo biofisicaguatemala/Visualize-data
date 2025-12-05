@@ -133,7 +133,7 @@ def Sim(verbose = True):
         long-range inputs over time to each node.
 
     """
-    global ic,dt,teq,tmax,ttotal,downsamp,seed
+    global ic,dt,teq,tmax,ttotal,downsamp,M,seed
          
     if M.shape[0]!=M.shape[1] or M.shape[0]!=nnodes:
         raise ValueError("check M dimensions (",M.shape,") and number of nodes (",nnodes,")")
@@ -161,7 +161,7 @@ def Sim(verbose = True):
     y = np.zeros((Ntotal, row, col)) #Matrix to store values
     y[0,:,:] = np.copy(ic) #First set of initial conditions
     
-    f1.recompile()
+    # f1.recompile()
     
     if verbose == True:
         for i in range(1,Nsim):
@@ -205,6 +205,7 @@ def ParamsSim():
         pardict[var]=eval(var)
         
     return pardict
+
 
 
 
